@@ -18,6 +18,19 @@ public abstract class Equipment
         Status = EquipmentStatus.Available;
     }
 
+    internal Equipment(int id, string name, EquipmentStatus status, string? unavailableReason)
+    {
+        Id = id;
+        Name = name;
+        Status = status;
+        UnavailableReason = unavailableReason;
+    }
+
+    public static void SynchronizeIdSequenceAfterLoad(int maxLoadedId)
+    {
+        _idCounter = Math.Max(_idCounter, maxLoadedId + 1);
+    }
+
     public int Id { get; }
     public string Name { get; }
     public EquipmentStatus Status { get; private set; }
