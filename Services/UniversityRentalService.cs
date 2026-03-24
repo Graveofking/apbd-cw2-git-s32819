@@ -2,7 +2,7 @@ using EquipmentRentalService.Domain;
 
 namespace EquipmentRentalService.Services;
 
-public sealed class UniversityRentalService
+public sealed class UniversityRentalService : IUniversityRentalService
 {
     private readonly RentalPolicy _policy;
     private readonly List<User> _users = [];
@@ -25,6 +25,8 @@ public sealed class UniversityRentalService
         _equipment.Add(equipment);
         return equipment;
     }
+
+    public IReadOnlyList<User> GetAllUsers() => _users.AsReadOnly();
 
     public IReadOnlyList<Equipment> GetAllEquipment() => _equipment.AsReadOnly();
 
@@ -125,6 +127,8 @@ public sealed class UniversityRentalService
             .AsReadOnly();
     }
 
+    public IReadOnlyList<Rental> GetAllRentals() => _rentals.AsReadOnly();
+
     public string GenerateSummaryReport(DateTime now)
     {
         var totalEquipment = _equipment.Count;
@@ -144,4 +148,21 @@ public sealed class UniversityRentalService
             $"Rentals active: {activeRentals}, closed: {closedRentals}, overdue: {overdueRentals}\n" +
             $"Total penalties collected: {totalPenalties:C}";
     }
+    
+    internal void ReplaceStateFromPersistence(
+        IReadOnlyList<User> users,
+        IReadOnlyList<Equipment> equipment,
+        IReadOnlyList<Rental> rentals)
+    {
+        _users.Clear();
+        _users.AddRange(users);
+        _equipment.Clear();
+        _equipment.AddRange(equipment);
+        _rentals.Clear();
+        _rentals.AddRange(rentals);
+    }
+
+    internal IReadOnlyList<User> UsersForPersistence => _users;
+    internal IReadOnlyList<Equipment> EquipmentForPersistence => _equipment;
+    internal IReadOnlyList<Rental> RentalsForPersistence => _rentals;
 }
